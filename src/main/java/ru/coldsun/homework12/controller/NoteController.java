@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.coldsun.homework12.model.Note;
-import ru.coldsun.homework12.services.FileGateway;
-import ru.coldsun.homework12.services.NoteService;
+import ru.coldsun.homework12.model.NoteServiceFactory;
+
 
 import java.util.List;
 
@@ -19,17 +19,15 @@ public class NoteController {
     private final Counter requestCounter = Metrics.counter("request_count");
 
     @Autowired
-    private final NoteService noteService;
+    private final NoteServiceFactory noteService; //фабрики (методов) сервисов
 
-    //private final FileGateway fileGateway;
 
     /**
      * Добавление заметки.
      */
     @PostMapping
     public Note addNote(@RequestBody Note note){
-        //fileGateway.writeToFile(note.getHeading() + ".txt", note.toString());
-        return noteService.addNotes(note);
+        return noteService.getService("allnotes").addNotes(note);
     }
 
     /**
@@ -37,7 +35,7 @@ public class NoteController {
      */
     @PutMapping("/{id}")
     public Note updateNoteStatus(@PathVariable Long id, @RequestBody Note note){
-        return noteService.updateNoteStatus(id, note);
+        return noteService.getService("allnotes").updateNoteStatus(id, note);
     }
 
     /**
@@ -46,7 +44,7 @@ public class NoteController {
     @GetMapping
     public List<Note> getAllNotes() {
         requestCounter.increment();
-        return noteService.getAllNotes();
+        return noteService.getService("allnotes").getAllNotes();
     }
 
     /**
@@ -54,7 +52,7 @@ public class NoteController {
      */
     @GetMapping("/{id}")
     public Note findById(@PathVariable("id") Long id) {
-        return noteService.getByIdNotes(id);
+        return noteService.getService("allnotes").getByIdNotes(id);
     }
 
     /**
@@ -62,7 +60,7 @@ public class NoteController {
      */
     @DeleteMapping("/{id}")
     public void deleteNote(@PathVariable Long id){
-        noteService.deleteByNotes(id);
+        noteService.getService("allnotes").deleteByNotes(id);
     }
 
     /**
@@ -70,7 +68,16 @@ public class NoteController {
      */
     @GetMapping("/sortDate")
     public List<Note> sortNote() {
-        return noteService.sortAllNotes();
+        return noteService.getService("allnotes").sortAllNotes();
+    }
+
+    /**
+     * росмотр всех заметок тематикой birthday
+     * реализовано через фабричный метод @birthday
+     */
+    @GetMapping("/birthday")
+    public List<Note> getAllNotesBirthday() {
+        return noteService.getService("birthday").getAllNotes();
     }
 
 

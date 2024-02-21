@@ -12,9 +12,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("allnotes")
 @AllArgsConstructor
-public class NoteService {
+public class NoteService implements SubjectOfNotes{
 
     private final NoteRepository noteRepository;
 

@@ -25,15 +25,23 @@ public class IntegrationConfig {
         return new DirectChannel();
     }
 
+    /**
+     * Трансформатор данных
+     * @return
+     */
     @Bean
     @Transformer(inputChannel = "textInputChanel", outputChannel = "fileWriterChanel")
     public GenericTransformer<String, String> mainTransformer() {
         return text -> {
-            //какая-то логика
+
             return text;
         };
     }
 
+    /**
+     * Активатор записи в файл
+     * @return
+     */
     @Bean
     @ServiceActivator(inputChannel = "fileWriterChanel")
     public FileWritingMessageHandler messageHandler() {
